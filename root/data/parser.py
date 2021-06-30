@@ -1,18 +1,28 @@
 import spacy
 import re
-
+import csv
 
 class Engine:
     def __init__(self):
         self.nlp = spacy.load("en_core_web_sm")
         self.initialise_response()
         
-        
+    
+    
+    def read_csv(self, path):
+        data = []
+        with open(path) as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=',')
+            data = [row for row in csv_reader]
+        return data[0]
+
+
     def initialise_response(self):
         self.rawtext = ''
         self.response = {
                 'email':[],
                 'phone':[],
+                'skills':[],
             }
     
         return 
@@ -22,9 +32,29 @@ class Engine:
         if email:
             for i in list(set(email)):
                 self.response['email'].append(i.strip(';'))
+    
+    def extract_skills(self, np):
+        skills = self.read_csv('skills.csv')
+        tokens = [token.text for token in np if not token.is_stop]
+        skillset = []
+        # check for one-grams
+        for token in tokens:
+            if token.lower() in skills:
+                skillset.append(token)
         
+        # check for bi-grams and tri-grams
+        for token in np.noun_chunks:
+            token = token.text.lower().strip()
+            if token in skills:
+                skillset.append(token)
+        
+        self.response['skills'] = [i.capitalize() for i in set([i.lower() for i in skillset])]
+        
+       
+    
     def extract_ner(self):
         doc = self.nlp(self.rawtext)
+        self.extract_skills(doc)
         self.response['ner']=doc.to_json()
         
     def extract_phones(self):
@@ -39,8 +69,7 @@ class Engine:
     def tokeninzer(self, text):
         self.initialise_response()
         self.rawtext = text
-        print(self.rawtext)
-        #self.extract_ner()
+        self.extract_ner()
         self.extract_phones()
         self.extract_emails()
         return self.response
