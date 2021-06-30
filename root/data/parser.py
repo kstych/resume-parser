@@ -1,21 +1,11 @@
 import spacy
 import re
-import csv
 
 class Engine:
     def __init__(self):
         self.nlp = spacy.load("en_core_web_sm")
         self.initialise_response()
         
-    
-    
-    def read_csv(self, path):
-        data = []
-        with open(path) as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=',')
-            data = [row for row in csv_reader]
-        return data[0]
-
 
     def initialise_response(self):
         self.rawtext = ''
@@ -33,8 +23,9 @@ class Engine:
             for i in list(set(email)):
                 self.response['email'].append(i.strip(';'))
     
+    # extracting skills
     def extract_skills(self, np):
-        skills = self.read_csv('skills.csv')
+        skills = [line.strip() for line in open('skills_match.txt', 'r')]
         tokens = [token.text for token in np if not token.is_stop]
         skillset = []
         # check for one-grams
@@ -47,7 +38,6 @@ class Engine:
             token = token.text.lower().strip()
             if token in skills:
                 skillset.append(token)
-        
         self.response['skills'] = [i.capitalize() for i in set([i.lower() for i in skillset])]
         
        
