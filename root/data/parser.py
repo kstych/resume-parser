@@ -40,15 +40,16 @@ class Engine:
             token = token.text.lower().strip()
             if token in skills:
                 skillset.append(token)
-        self.response['skills'] = [i.capitalize() for i in set([i.lower() for i in skillset])]
+        self.response['skills'] = [i.capitalize() for i in set([i.lower() for i in skillset]) if i]
         
         
     # extract education
     def extract_education_course(self):
-        pattern = '|'.join(['({})'.format(re.escape(line.strip('\n'))) for line in open('education_match.txt', 'r')])
+        pattern = '|'.join(['((?!\W){}(?=\W))'.format(re.escape(line.strip('\n'))) for line in open('education_match.txt', 'r')])
         regex = re.compile(pattern, re.I)
-        course = [i[0].strip() for i in regex.findall(self.rawtext)]
-        self.response['education'] = [i.upper() for i in set([i.lower() for i in course])]
+        print(self.rawtext)
+        course = [''.join(i).strip() for i in regex.findall(self.rawtext)]
+        self.response['education'] = [i.upper() for i in set([i.lower() for i in course]) if i]
          
     
     def extract_ner(self):

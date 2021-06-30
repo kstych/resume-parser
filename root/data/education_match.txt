@@ -1,18 +1,22 @@
- be 
- b.e. 
- b.e 
- bs 
- b.s 
- me 
- m.e 
- m.e. 
- ms 
- m.s 
- btech 
- mtech 
- ssc 
- hsc 
- cbse 
- icse 
- x 
- xii 
+be
+bca
+b.c.a
+mca
+m.c.a
+b.e.
+b.e
+bs
+b.s
+me
+m.e
+m.e.
+ms
+m.s
+btech
+mtech
+ssc
+hsc
+cbse
+icse
+x
+xii
