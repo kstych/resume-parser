@@ -1,6 +1,6 @@
 import spacy
 import re
-
+from spacy.matcher import Matcher
 class Engine:
     def __init__(self):
         self.nlp = spacy.load("en_core_web_sm")
@@ -14,6 +14,7 @@ class Engine:
                 'phone':[],
                 'skills':[],
                 'education':[],
+                'names':[],
             }
     
         return 
@@ -25,10 +26,31 @@ class Engine:
             for i in list(set([i[0] for i in email])):
                 self.response['email'].append(i.strip(';').strip())
     
+    # extract name
+    def extract_name(self):
+        NAME_PATTERN = [
+            [
+                {'POS': 'PROPN'}, 
+                {'POS': 'PROPN'}, 
+                {'IS_DIGIT':False},
+                {'IS_LOWER':False},
+            ]
+        ]
+        matcher = Matcher(self.nlp.vocab)
+        matcher.add('NAME',NAME_PATTERN)
+        matches = matcher(self.doc)
+        
+        # noice reducer
+        for match_id, start, end in matches:
+            span = self.doc[start:end]
+            self.response['names'].append(span.text)
+        
+        
+    
     # extracting skills
-    def extract_skills(self, np):
+    def extract_skills(self):
         skills = [line.strip().lower() for line in open('skills_match.txt', 'r')]
-        tokens = [token.text for token in np if not token.is_stop]
+        tokens = [token.text for token in self.doc if not token.is_stop]
         skillset = []
         # check for one-grams
         for token in tokens:
@@ -36,7 +58,7 @@ class Engine:
                 skillset.append(token)
         
         # check for bi-grams and tri-grams
-        for token in np.noun_chunks:
+        for token in self.doc.noun_chunks:
             token = token.text.lower().strip()
             if token in skills:
                 skillset.append(token)
@@ -47,16 +69,14 @@ class Engine:
     def extract_education_course(self):
         pattern = '|'.join(['((?!\W){}(?=\W))'.format(re.escape(line.strip('\n'))) for line in open('education_match.txt', 'r')])
         regex = re.compile(pattern, re.I)
-        print(self.rawtext)
         course = [''.join(i).strip() for i in regex.findall(self.rawtext)]
         self.response['education'] = [i.upper() for i in set([i.lower() for i in course]) if i]
          
     
     def extract_ner(self):
-        doc = self.nlp(self.rawtext)
-        self.extract_skills(doc)
+        self.doc = self.nlp(self.rawtext)
         
-        #self.response['ner']=doc.to_json()
+        
     
     # extract phones
     def extract_phones(self):
@@ -72,8 +92,11 @@ class Engine:
     def tokeninzer(self, text):
         self.initialise_response()
         self.rawtext = text
+        self.doc = None
         self.extract_ner()
+        self.extract_skills()
         self.extract_phones()
         self.extract_emails()
         self.extract_education_course()
+        self.extract_name()
         return self.response
