@@ -32,19 +32,22 @@ class Engine:
             [
                 {'POS': 'PROPN'}, 
                 {'POS': 'PROPN'}, 
-                {'IS_DIGIT':False},
-                {'IS_LOWER':False},
+                {'POS': 'PROPN'},
             ]
         ]
         matcher = Matcher(self.nlp.vocab)
         matcher.add('NAME',NAME_PATTERN)
         matches = matcher(self.doc)
-        
+        output = []
         # noice reducer
         for match_id, start, end in matches:
             span = self.doc[start:end]
-            self.response['names'].append(span.text)
+            for i in span.ents:
+                if i.label_=='PERSON':
+                    output.append(i.text)
         
+        # noice reduction
+        self.response['names'] = output
         
     
     # extracting skills
