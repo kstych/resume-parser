@@ -1,7 +1,7 @@
 import spacy
 import re
 from spacy.matcher import Matcher
-
+from grex.gen import KB_Extractor
 # Engine Class
 class Engine:
     def __init__(self):
@@ -93,7 +93,11 @@ class Engine:
                         i = '+'+i
                 self.response['phone'].append(i)
         
-    
+
+    def include_ntlk_data(self):
+        self.response['KB'] = KB_Extractor(self.rawtext)
+        return 
+
     def tokeninzer(self, text):
         self.initialise_response()
         self.rawtext = text
@@ -104,4 +108,5 @@ class Engine:
         self.extract_emails()
         self.extract_education_course()
         self.extract_name()
+        self.include_ntlk_data()
         return self.response
