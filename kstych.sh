@@ -1,5 +1,5 @@
 #!/bin/bash
 
 cd /root/data
-python web.py
+python serve.py
 

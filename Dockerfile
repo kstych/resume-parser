@@ -6,10 +6,9 @@ FROM fedora:latest
 MAINTAINER kstych_private_limited
 
 RUN dnf -y update
-RUN dnf install python python-pip -y
-
+RUN dnf install python python-pip -y python-devel gcc
 RUN pip install -U pip setuptools wheel
-RUN pip install spacy
+RUN pip install spacy python-Levenshtein
 
 RUN pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.0.0/en_core_web_sm-3.0.0.tar.gz
 
