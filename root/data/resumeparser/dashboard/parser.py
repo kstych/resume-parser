@@ -57,20 +57,10 @@ class Engine:
     # extracting skills
     def extract_skills(self):
         skills = [line.strip().lower() for line in open(os.path.join(BASE_PATH, 'KB/Skills.txt'), 'r')]
-        tokens = [token.text for token in self.doc if not token.is_stop]
-        skillset = []
-        # check for one-grams
-        for token in tokens:
-            if token.lower() in skills:
-                skillset.append(token)
-        
-        # check for bi-grams and tri-grams
-        for token in self.doc.noun_chunks:
-            token = token.text.lower().strip()
-            if token in skills:
-                skillset.append(token)
-        self.response['skills'] = [i.capitalize() for i in set([i.lower() for i in skillset]) if i]
-        
+        regex = '|'.join(['(?!\W){}(?=\W)'.format(re.escape(i)) for i in skills])
+        cregex = re.compile(regex, re.I)
+        result = cregex.findall(self.rawtext)
+        self.response['skills'] = list(set([i.capitalize() for i in result if i]))
         
     # extract education
     def extract_education_course(self):
@@ -97,7 +87,7 @@ class Engine:
         
 
     def include_ntlk_data(self):
-        self.response['KB'] = KB_Extractor(self.rawtext)
+        self.response['Suggestions'] = KB_Extractor(self.rawtext)
         return 
 
     def tokeninzer(self, text):
@@ -105,10 +95,12 @@ class Engine:
         self.rawtext = text
         self.doc = None
         self.extract_ner()
+
         self.extract_skills()
         self.extract_phones()
         self.extract_emails()
         self.extract_education_course()
         self.extract_name()
+
         self.include_ntlk_data()
         return self.response
