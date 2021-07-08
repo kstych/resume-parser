@@ -19,6 +19,9 @@ class Engine:
                 'skills':[],
                 'education':[],
                 'names':[],
+                'nationality':[],
+                'designation':[],
+                'gender':[],
             }
     
         return 
@@ -84,7 +87,36 @@ class Engine:
                     if '+' not in i:
                         i = '+'+i
                 self.response['phone'].append(i)
-        
+    
+    # extract nationality
+    def extract_nationality(self):
+        nationality = [line.strip().lower() for line in open(os.path.join(BASE_PATH, 'KB/Nationality.txt'), 'r')]
+        regex = '|'.join(['(?!\W){}(?=\W)'.format(re.escape(i)) for i in nationality])
+        cregex = re.compile(regex, re.I)
+        result = cregex.findall(self.rawtext)
+        self.response['nationality'] = list(set([i.capitalize() for i in result if i]))
+        return 
+
+    # extract designation
+    def extract_designation(self):
+        designation = [line.strip().lower() for line in open(os.path.join(BASE_PATH, 'KB/Designation.txt'), 'r')]
+        regex = '|'.join(['(?!\W){}(?=\W)'.format(re.escape(i)) for i in designation])
+        cregex = re.compile(regex, re.I)
+        result = cregex.findall(self.rawtext)
+        self.response['designation'] = list(set([i.capitalize() for i in result if i]))
+        return 
+    
+    # extract gender
+    def extract_gender(self):
+        gender = [line.strip().lower() for line in open(os.path.join(BASE_PATH, 'KB/Gender.txt'), 'r')]
+        regex = '|'.join(['(?!\W){}(?=\W)'.format(re.escape(i)) for i in gender])
+        cregex = re.compile(regex, re.I)
+        result = cregex.findall(self.rawtext)
+        self.response['gender'] = list(set([i.capitalize() for i in result if i]))
+        return 
+
+
+
 
     def include_ntlk_data(self):
         self.response['Suggestions'] = KB_Extractor(self.rawtext)
@@ -101,6 +133,9 @@ class Engine:
         self.extract_emails()
         self.extract_education_course()
         self.extract_name()
+        self.extract_nationality()
+        self.extract_designation()
+        self.extract_gender()
 
         self.include_ntlk_data()
         return self.response
