@@ -1,5 +1,6 @@
 #!/bin/bash
 
-cd /root/data
-python serve.py
+cd /root/data/resumeparser
+python manage.py runserver 0.0.0.0:8080
+
 
