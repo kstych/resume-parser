@@ -1,7 +1,9 @@
 import spacy
 import re
+import os
 from spacy.matcher import Matcher
-from grex.gen import KB_Extractor
+from .grex.gen import KB_Extractor, BASE_PATH
+
 # Engine Class
 class Engine:
     def __init__(self):
@@ -54,7 +56,7 @@ class Engine:
     
     # extracting skills
     def extract_skills(self):
-        skills = [line.strip().lower() for line in open('skills_match.txt', 'r')]
+        skills = [line.strip().lower() for line in open(os.path.join(BASE_PATH, 'KB/Skills.txt'), 'r')]
         tokens = [token.text for token in self.doc if not token.is_stop]
         skillset = []
         # check for one-grams
@@ -72,7 +74,7 @@ class Engine:
         
     # extract education
     def extract_education_course(self):
-        pattern = '|'.join(['((?!\W){}(?=\W))'.format(re.escape(line.strip('\n'))) for line in open('education_match.txt', 'r')])
+        pattern = '|'.join(['((?!\W){}(?=\W))'.format(re.escape(line.strip('\n'))) for line in open(os.path.join(BASE_PATH, 'KB/Education.txt'), 'r')])
         regex = re.compile(pattern, re.I)
         course = [''.join(i).strip() for i in regex.findall(self.rawtext)]
         self.response['education'] = [i.upper() for i in set([i.lower() for i in course]) if i]

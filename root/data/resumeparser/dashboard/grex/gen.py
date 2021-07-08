@@ -148,7 +148,8 @@ def Matcher(NGRAM_TOKEN_PATTERNS, RAW_DATA, ERROR = 1):
 BASE_PATH = './../'
 
 if __name__!='__main__':
-    BASE_PATH = './'
+    from django.conf import settings
+    BASE_PATH = os.path.join(settings.BASE_DIR,'dashboard')
 
 
 SKILLS_PATTERNS_NGRAMS = ngram_sets(open(os.path.join(BASE_PATH, 'KB/Skills.txt'),'r').read().split('\n'))
