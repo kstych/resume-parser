@@ -5,9 +5,37 @@ from .parser import Engine
 
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import TextConverter
-from pdfminer.layout import LAParams
 from pdfminer.pdfpage import PDFPage
 from io import StringIO
+import docx2txt
+from pdfminer import high_level
+import pandas as pd
+from pdfminer.high_level import extract_pages
+from pdfminer.layout import LTTextContainer, LTChar,LTLine,LAParams
+
+
+def ExtractHeavyFonts(pdffile):
+    Extract_Data = {}
+    for page_layout in extract_pages(pdffile):
+        for element in page_layout:
+            if isinstance(element, LTTextContainer):
+                for text_line in element:
+                    for character in text_line:
+                        if isinstance(character, LTChar):
+                            Font_size=int(character.size)
+                txt = element.get_text().replace('\t', ' ').replace('\n', ' ')
+                if Font_size in Extract_Data:
+                    if txt not in Extract_Data[Font_size]:
+                        Extract_Data[Font_size].append(txt)
+                else:
+                    Extract_Data[Font_size]= [txt]
+    return Extract_Data
+                
+
+def extract_text_from_doc(doc_path):
+    temp = docx2txt.process(doc_path)
+    text = [line.replace('\t', ' ') for line in temp.split('\n') if line]
+    return ' '.join(text)
 
 def convert_pdf_to_txt(fp):
     rsrcmgr = PDFResourceManager()
@@ -54,10 +82,13 @@ class Index2(View):
 
     def post(self, request):
         received = None
+        prediction = None
         pdf = request.FILES.get('resume')
         if pdf:
             try:
-                received=convert_pdf_to_txt(pdf).replace('\n', ' ')         
+                prediction = ExtractHeavyFonts(pdf)
+                received=convert_pdf_to_txt(pdf).replace('\n', ' ')
+
             except Exception as e:
                 
                 return JsonResponse({
@@ -67,6 +98,7 @@ class Index2(View):
         return JsonResponse({
                 'status':'OK',
                 'rawtext': received,
-                'result':en.tokeninzer(received)
+                'result':en.tokeninzer(received),
+                'VisualWeights':prediction
 
         })

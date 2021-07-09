@@ -22,6 +22,7 @@ class Engine:
                 'nationality':[],
                 'designation':[],
                 'gender':[],
+                'companies':[],
             }
     
         return 
@@ -117,10 +118,19 @@ class Engine:
 
 
 
-
+    #
     def include_ntlk_data(self):
         self.response['Suggestions'] = KB_Extractor(self.rawtext)
         return 
+
+    # extract organizations
+    def extract_companies(self):
+        results = []
+        for a in self.doc.ents:
+            if a.label_=='ORG':
+                results.append(a.text)
+        self.response['companies']=list(set(results))
+        return
 
     def tokeninzer(self, text):
         self.initialise_response()
@@ -136,6 +146,7 @@ class Engine:
         self.extract_nationality()
         self.extract_designation()
         self.extract_gender()
+        self.extract_companies()
 
         self.include_ntlk_data()
         return self.response
