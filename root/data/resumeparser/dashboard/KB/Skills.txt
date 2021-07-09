@@ -1,11 +1,4 @@
 technical skills
-ajenti
-django-suit
-django-xadmin
-flask-admin
-flower
-grappelli
-wooey
 algorithms
 pypattyrn
 python-patterns

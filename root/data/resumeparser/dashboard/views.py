@@ -121,9 +121,11 @@ class Adjust(View):
         return render(request, 'index3.html')
 
     def post(self, request):
-        target = request.GET.get('target')
-        append = request.GET.get('append')
-        status = InsertIntoKB(target, append)
+        target = request.POST.get('target')
+        append = request.POST.get('append')
+        status = False
+        if target and append:
+            status = InsertIntoKB(target, append)
 
         return JsonResponse({
                 'status':'OK',
