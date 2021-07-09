@@ -82,7 +82,15 @@ class Index2(View):
     def post(self, request):
         received = None
         prediction = None
-        pdf = request.FILES.get('resume')
+        doc = None
+        pdf = None 
+        filename = str(request.FILES.get('resume'))
+        
+        if filename.endswith('.pdf'):
+            pdf = request.FILES.get('resume')
+        else:
+            doc = request.FILES.get('resume')
+        
         if pdf:
             try:
                 prediction = ExtractHeavyFonts(pdf)
@@ -94,6 +102,9 @@ class Index2(View):
                         'status':'ERROR',
                         'error': e
                 })
+        else:
+            received = extract_text_from_doc(doc)
+            prediction = {}
         return JsonResponse({
                 'status':'OK',
                 'rawtext': received,
