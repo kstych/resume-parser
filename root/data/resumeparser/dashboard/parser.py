@@ -150,3 +150,9 @@ class Engine:
 
         self.include_ntlk_data()
         return self.response
+
+def InsertIntoKB(target, token):
+    f = open(os.path.join(BASE_PATH, 'KB/{}.txt'.format(target.capitalize())), 'a')
+    f.write('{}\n'.format(token))
+    f.close()
+    return True

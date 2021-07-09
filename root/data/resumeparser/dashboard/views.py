@@ -1,7 +1,8 @@
+import re
 from django.http import JsonResponse
 from django.views import View
 from django.shortcuts import render
-from .parser import Engine
+from .parser import Engine, InsertIntoKB
 
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import TextConverter
@@ -111,4 +112,21 @@ class Index2(View):
                 'result':en.tokeninzer(received),
                 'VisualWeights':prediction
 
+        })
+
+
+
+class Adjust(View):
+    def get(self, request):
+        return render(request, 'index2.html')
+
+    def post(self, request):
+        target = request.GET.get('target')
+        append = request.GET.get('append')
+        status = InsertIntoKB(target, append)
+
+        return JsonResponse({
+                'status':'OK',
+                'result':status
+        
         })
