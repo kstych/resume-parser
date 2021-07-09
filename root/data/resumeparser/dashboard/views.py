@@ -118,7 +118,7 @@ class Index2(View):
 
 class Adjust(View):
     def get(self, request):
-        return render(request, 'index2.html')
+        return render(request, 'index3.html')
 
     def post(self, request):
         target = request.GET.get('target')
