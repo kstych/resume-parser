@@ -9,7 +9,6 @@ from pdfminer.pdfpage import PDFPage
 from io import StringIO
 import docx2txt
 from pdfminer import high_level
-import pandas as pd
 from pdfminer.high_level import extract_pages
 from pdfminer.layout import LTTextContainer, LTChar,LTLine,LAParams
 

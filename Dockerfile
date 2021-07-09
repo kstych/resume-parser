@@ -9,7 +9,8 @@ RUN dnf -y update
 RUN dnf install python python-pip -y python-devel gcc
 RUN pip install -U pip setuptools wheel
 RUN pip install spacy python-Levenshtein django
-RUN pip install pdfminer
+RUN dnf install -y python3-pdfminer
+RUN pip install docx2txt
 RUN pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.0.0/en_core_web_sm-3.0.0.tar.gz
 
 COPY ./kstych.sh /usr/local/kstych.sh
