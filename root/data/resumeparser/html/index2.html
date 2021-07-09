@@ -7,27 +7,29 @@
     <div class="container">
         <header class="d-flex justify-content-center py-3">
           <ul class="nav nav-pills">
-            <li class="nav-item"><a href="/" class="nav-link active" aria-current="page">Text</a></li>
-            <li class="nav-item"><a href="/pdf" class="nav-link">File</a></li>
+            <li class="nav-item"><a href="/" class="nav-link" aria-current="page">Text</a></li>
+            <li class="nav-item"><a href="/pdf" class="nav-link active">File</a></li>
            
           </ul>
         </header>
       </div>
 
     <div class="px-4 py-5 my-5 text-center">
-        <i class="text-secondary las la-chart-bar la-9x"></i>
+        <i class="text-danger las la-file-pdf la-9x"></i>
         <h1 class="display-5 fw-bold">Information Minner</h1>
         <div class="col-lg-6 mx-auto">
           <p class="lead mb-4">
-            To Insert Your Raw Text Below To Extract Details      
-        </p>
-        <form method="POST" action="." target="_blank">
-            <input type="hidden" name="format" value="text">
-            <label for="text">Text :</label><br>
-            <textarea type="text" cols="85" rows="10" name="text"></textarea><br>
+            Upload Your PDF To Extract Data     
+          </p>
+        <div class="container">
+          <form method="POST" action="." enctype="multipart/form-data">
+            <input type="hidden" name="format" value="pdf">
+            <input type="file" name="resumes" accept=".pdf">
+            
             <input type="submit" value="Submit" class="btn btn-primary btn-lg">
         </form> 
-          
+        
+        </div>  
         </div>
       </div>
     

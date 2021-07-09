@@ -16,3 +16,16 @@ class Index(View):
             'status':'OK',
             'result':en.tokeninzer(text)
         })
+
+
+
+class Index2(View):
+    def get(self, request):
+        return render(request, 'index2.html')
+
+    def post(self, request):
+        text = request.POST.get('text')
+        return JsonResponse({
+            'status':'OK',
+            'result':en.tokeninzer(text)
+        })
